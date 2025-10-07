@@ -3,13 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="./styles.css" />
     <title>Task manager</title>
   </head>
   <body>
-    <ul id="task-list">
-      <!-- Tasks will be dynamically added here -->
-    </ul>
-    <script src="main.js"></script>
+    <header class="header">
+      <h1 class="title">Task manager</h1>
+      <button class="button">
+        <img
+          src="https://cdn.jsdelivr.net/npm/lucide-static@latest/icons/circle-plus.svg"
+          alt="Circle Plus icon"
+          width="16"
+          height="16"
+        />
+        Add Task
+      </button>
+    </header>
+
+    <main class="container">
+      <h3 class="section-title">Your Tasks</h3>
+      <ul id="task-list" class="task-list"></ul>
+    </main>
+    <script type="module" src="./main.js"></script>
   </body>
 </html>

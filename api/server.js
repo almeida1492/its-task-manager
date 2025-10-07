@@ -1,126 +1,16 @@
-import http from "http";
+import express from "express";
+import tasksRouter from "./tasks.js";
+import { cors } from "./middlewares/cors.js";
 
 const API_PORT = 8080;
 
-const statuses = ["in progress", "completed"];
+const app = express();
 
-const tasks = [
-  {
-    id: 1,
-    name: "Complete math homework",
-    description:
-      "Finish all assigned exercises from the algebra chapter, showing all work and checking answers for accuracy before submitting to the teacher.",
-    createdAt: "2023-10-01T15:00:00Z",
-    author: "hribeiro",
-    status: statuses[0],
-  },
-  {
-    id: 2,
-    name: "Study for biology test",
-    description:
-      "Review notes and textbook chapters on cell structure and function, create flashcards for key terms, and take practice quizzes to prepare for the upcoming test.",
-    createdAt: "2023-10-02T16:00:00Z",
-    author: "hribeiro",
-    status: statuses[1],
-  },
-  {
-    id: 3,
-    name: "Join science club meeting",
-    description:
-      "Attend the weekly science club meeting after school, participate in group activities, and sign up for the upcoming science fair project.",
-    createdAt: "2023-10-03T17:00:00Z",
-    author: "hribeiro",
-    status: statuses[0],
-  },
-  {
-    id: 4,
-    name: "Prepare English essay",
-    description:
-      "Draft and revise an essay on the assigned novel, focusing on character development and themes, and submit the final version before the deadline.",
-    createdAt: "2023-10-04T18:00:00Z",
-    author: "hribeiro",
-    status: statuses[1],
-  },
-  {
-    id: 5,
-    name: "Practice for basketball tryouts",
-    description:
-      "Attend after-school basketball practice, work on dribbling and shooting skills, and review the team playbook to get ready for tryouts.",
-    createdAt: "2023-10-05T19:00:00Z",
-    author: "hribeiro",
-    status: statuses[0],
-  },
-  {
-    id: 6,
-    name: "Organize locker",
-    description:
-      "Clean out old papers and supplies from the locker, organize textbooks and notebooks, and decorate with new photos and stickers.",
-    createdAt: "2023-10-06T20:00:00Z",
-    author: "hribeiro",
-    status: statuses[1],
-  },
-  {
-    id: 7,
-    name: "Meet with guidance counselor",
-    description:
-      "Schedule and attend a meeting with the guidance counselor to discuss course selections, college plans, and extracurricular activities.",
-    createdAt: "2023-10-07T21:00:00Z",
-    author: "hribeiro",
-    status: statuses[0],
-  },
-  {
-    id: 8,
-    name: "Volunteer at school event",
-    description:
-      "Sign up to help set up and run the annual school fundraiser, assist with ticket sales, and clean up after the event.",
-    createdAt: "2023-10-08T22:00:00Z",
-    author: "hribeiro",
-    status: statuses[1],
-  },
-  {
-    id: 9,
-    name: "Prepare for history presentation",
-    description:
-      "Research assigned historical topic, create a slideshow, and practice presenting in front of friends to get feedback before presenting in class.",
-    createdAt: "2023-10-09T23:00:00Z",
-    author: "hribeiro",
-    status: statuses[0],
-  },
-  {
-    id: 10,
-    name: "Update student planner",
-    description:
-      "Review upcoming assignments and deadlines, add new tasks to the planner, and set reminders for important school events.",
-    createdAt: "2023-10-10T08:00:00Z",
-    author: "hribeiro",
-    status: statuses[1],
-  },
-];
+app.use(express.json());
+app.use(cors);
 
-const server = http.createServer((req, res) => {
-  if (req.method === "GET") {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "application/json");
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-    res.end(JSON.stringify(tasks));
-  } else if (req.method === "POST") {
-    let body = "";
-    req.on("data", (chunk) => {
-      body += chunk.toString();
-    });
-    req.on("end", () => {
-      const newTask = JSON.parse(body);
-      newTask.id = tasks.length + 1;
-      newTask.createdAt = new Date().toISOString();
-      tasks.push(newTask);
-      res.statusCode = 201;
-      res.setHeader("Content-Type", "application/json");
-      res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-      res.end(JSON.stringify(newTask));
-    });
-  }
-});
+app.use("/tasks", tasksRouter);
 
-server.listen(API_PORT, () => {
+app.listen(API_PORT, () => {
   console.log(`Server is running on http://localhost:${API_PORT}`);
 });

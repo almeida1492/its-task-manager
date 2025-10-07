@@ -1,7 +1,7 @@
 async function getTasks() {
   let data = [];
   try {
-    const response = await fetch("http://localhost:8080");
+    const response = await fetch("http://localhost:8080/tasks");
     data = await response.json();
   } catch (error) {
     console.error("Error fetching tasks:", error);
@@ -15,6 +15,7 @@ getTasks().then((data) => {
     const statusIcon =
       task.status === "in progress" ? "circle-dot" : "circle-check";
     const li = document.createElement("li");
+    li.className = "task-item";
     li.innerHTML = `
         <div class="task-header">
             <h4 class="task-name">${task.name}</h4>
