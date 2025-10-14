@@ -78,6 +78,8 @@ h4 {
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.1s;
+  width: fit-content;
+  margin-left: auto;
   &:hover {
     background-color: #5c7a99;
     color: #ffffff;
@@ -86,4 +88,22 @@ h4 {
       filter: invert(100%);
     }
   }
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.input-field {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }

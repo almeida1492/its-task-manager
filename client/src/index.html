@@ -20,6 +20,23 @@
       </button>
     </header>
 
+    <form id="task-form" class="task-form">
+      <h2 class="section-title">Add New Task</h2>
+      <input name="name" class="input-field" placeholder="name" />
+      <textarea
+        name="description"
+        class="input-field"
+        placeholder="description"
+        rows="5"
+      ></textarea>
+      <input name="author" class="input-field" placeholder="author" />
+      <select name="status" class="input-field">
+        <option value="" disabled selected>Select a status</option>
+        <option value="in progress">In progress</option>
+        <option value="completed">Completed</option>
+      </select>
+      <button class="button">Add task</button>
+    </form>
     <main class="container">
       <h3 class="section-title">Your Tasks</h3>
       <ul id="task-list" class="task-list"></ul>

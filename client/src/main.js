@@ -1,22 +1,29 @@
-async function getTasks() {
-  let data = [];
-  try {
-    const response = await fetch("http://localhost:8080/tasks");
-    data = await response.json();
-  } catch (error) {
-    console.error("Error fetching tasks:", error);
-  }
-  return data;
-}
+function app() {
+  let tasks = [];
 
-getTasks().then((data) => {
-  data.forEach((task) => {
-    const createdAt = new Date(task.createdAt);
-    const statusIcon =
-      task.status === "in progress" ? "circle-dot" : "circle-check";
-    const li = document.createElement("li");
-    li.className = "task-item";
-    li.innerHTML = `
+  async function getTasks() {
+    let data = [];
+    try {
+      const response = await fetch("http://localhost:8080/tasks");
+      data = await response.json();
+      tasks = data;
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+    return data;
+  }
+
+  function renderTasks(tasks) {
+    const taskList = document.getElementById("task-list");
+    taskList.innerHTML = "";
+
+    tasks.forEach((task) => {
+      const createdAt = new Date(task.createdAt);
+      const statusIcon =
+        task.status === "in progress" ? "circle-dot" : "circle-check";
+      const li = document.createElement("li");
+      li.className = "task-item";
+      li.innerHTML = `
         <div class="task-header">
             <h4 class="task-name">${task.name}</h4>
             <span class="task-info">@${
@@ -34,6 +41,46 @@ getTasks().then((data) => {
         </div>
         <p class="task-description">${task.description}</p>
     `;
-    document.getElementById("task-list").appendChild(li);
+      document.getElementById("task-list").appendChild(li);
+    });
+  }
+
+  async function addTask(taskData) {
+    try {
+      const result = await fetch("http://localhost:8080/tasks", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskData),
+      });
+
+      if (result.ok) {
+        const newTask = await result.json();
+        alert("Task added successfully!");
+        tasks.push(newTask);
+        renderTasks(tasks);
+      }
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
+  }
+
+  getTasks().then(renderTasks);
+
+  document.getElementById("task-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+
+    const taskData = {
+      name: formData.get("name"),
+      description: formData.get("description"),
+      author: formData.get("author"),
+      status: formData.get("status"),
+    };
+
+    addTask(taskData);
   });
-});
+}
+
+app();
