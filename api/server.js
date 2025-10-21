@@ -2,11 +2,12 @@ import express from "express";
 import sqlite3 from "sqlite3";
 import { cors } from "./middlewares/cors.js";
 import tasksRouter from "./tasks.js";
+import usersRouter from "./users.js";
 
 const API_PORT = 8080;
 
 const sql3 = sqlite3.verbose();
-const db = new sql3.Database("./tasks.db", (err) => {
+export const db = new sql3.Database("./tasks.db", (err) => {
   if (err) {
     console.error("Error opening database:", err.message);
   } else {
@@ -27,6 +28,24 @@ const db = new sql3.Database("./tasks.db", (err) => {
         }
       }
     );
+
+    db.run(
+      `CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL UNIQUE,
+      password TEXT NOT NULL,
+      name TEXT NOT NULL,
+      surname TEXT NOT NULL,
+      email TEXT NOT NULL UNIQUE
+    )`,
+      (err) => {
+        if (err) {
+          console.error("Error creating users table:", err.message);
+        } else {
+          console.log("Users table is ready.");
+        }
+      }
+    );
   }
 });
 
@@ -36,6 +55,7 @@ app.use(express.json());
 app.use(cors);
 
 app.use("/tasks", tasksRouter);
+app.use("/users", usersRouter);
 
 app.listen(API_PORT, () => {
   console.log(`Server is running on http://localhost:${API_PORT}`);

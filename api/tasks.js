@@ -1,4 +1,5 @@
 import express from "express";
+import { db } from "./server.js";
 
 const router = express.Router();
 
@@ -98,7 +99,14 @@ const tasks = [
 ];
 
 router.get("/", (req, res) => {
-  res.json(tasks);
+  db.all(`SELECT * FROM tasks`, (err, rows) => {
+    if (err) {
+      console.error("Error retrieving tasks:", err.message);
+      res.status(500).json({ error: "Internal server error" });
+    } else {
+      res.json(rows);
+    }
+  });
 });
 
 router.post("/", (req, res) => {
@@ -109,17 +117,27 @@ router.post("/", (req, res) => {
       .json({ error: "Name, description, and author are required." });
   }
 
-  const newTask = {
-    id: tasks.length + 1,
-    name,
-    description,
-    createdAt: new Date().toISOString(),
-    author,
-    status: statuses[0],
-  };
-
-  tasks.push(newTask);
-  res.status(201).json(newTask);
+  db.run(
+    `INSERT INTO tasks (name, description, author, status) VALUES (?, ?, ?, ?)`,
+    [name, description, author, statuses[0]],
+    function (err) {
+      if (err) {
+        console.error("Error inserting new task:", err.message);
+        res.status(500).json({ error: "Internal server error" });
+      } else {
+        db.get(
+          "SELECT * FROM tasks WHERE id = ?",
+          [this.lastID],
+          (err, row) => {
+            if (err) {
+              return next(err);
+            }
+            res.status(201).json(row);
+          }
+        );
+      }
+    }
+  );
 });
 
 router.delete("/:id", (req, res) => {
